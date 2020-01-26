@@ -1,1 +1,17 @@
-asdf
+Serie 1:
+	a) Un Thread es una secuencia unica dentro de un proceso. Los threads de un mismo proceso no son independientes entre si, sino que comparten el mismo espacio de memoria, es decir, code section, data section, recursos del sistema. Sin embargo, cada Thread tiene su propio Program Counter, su propio espacio del Stack y su propio set de registros.
+	b) Un Process es una instancia de un programa. Los procesos son independientes de otros ya que cada proceso provee los recursos necesarios para ejecutar un determinado programa y cada proceso tiene asociado un espacio de memoria unico. Pueden existir multiples procesos asociados a un programa. Un Process es empezado por un Thread llamado Primary Thread.
+	c) Diferencias:
+		- Todo proceso es un thread mientras que no todos los threads son un proceso.
+		- Los procesos son independientes entre si mientras los threads no.
+		- Los threads comparten un espacio de memoria pero los procesos tienen asignados distintos espacios de memoria
+		- Context switching entre threads es mas rapido comparado con los procesos
+
+Serie 2:
+Multi-threading es un tipo de modelo de ejecucion en el cual permite que muchos threads existan dentro del contexto de un proceso. Este modelo permite que cada thread se ejecute de manera independiente pero comparten el mismo espacio de memoria asignado y otros recursos del proceso.
+
+Serie 3:
+Multi-processing es la capacidad de un systema de correr varios procesos a la vez de manera coordinada, ya sea empleando distintos CPUs o usando uno.
+
+Serie 4:
+	a) 
