@@ -18,7 +18,10 @@ void *labThread(void * args)
 	int primes[n];
 	int countPrimes = 1;
 	* (primes) = 2;
-	printf("Thread %d: El numero %d es Primo.\n", *arg->threadID, 2);
+	if (n)
+	{
+		printf("Thread %d: El numero %d es Primo.\n", *arg->threadID, 2);
+	}
 	int flag = 1;
 
 	for (int i = 2; countPrimes < n; ++i)

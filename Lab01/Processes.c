@@ -12,7 +12,9 @@ void labProc(int id, int number)
 	int primes[n];
 	int countPrimes = 1;
 	* (primes) = 2;
-	printf("Process %d: El numero %d es Primo.\n", procId, 2);
+	if(n){
+		printf("Process %d: El numero %d es Primo.\n", procId, 2);
+	}
 	int flag = 1;
 
 	for (int i = 2; countPrimes < n; ++i)
