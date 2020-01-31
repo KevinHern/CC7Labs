@@ -14,4 +14,9 @@ Serie 3:
 Multi-processing es la capacidad de un systema de correr varios procesos a la vez de manera coordinada, ya sea empleando distintos CPUs o usando uno.
 
 Serie 4:
-	a) 
+	a) La cantidad de threads que puede ejecutar a la vez es 1 pero la cantidad de threads que pueden existir son los que la memoria permita.
+	La cantidad de Procesos que puede ejectuar es 1 pero pueden existir muchos procesos (lo que la memoria permita).
+	b) Cantidad de Threads: el número de cores
+	Cantidad de Precosos: número de procesadores
+	c) Tomando como ejemplo el procesador Intell I7-8750H, es un procesador con 6 procesadores y 2 cores.
+	Como posee más cores, tienes más Pipelines disponibles, y eso implica que puede tener más threads ejectuandose a la vez. En este caso particular, puede tener 2 threads ejecutandose a la vez.
