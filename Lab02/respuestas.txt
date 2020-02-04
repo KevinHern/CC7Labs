@@ -1,0 +1,19 @@
+Procesos en Windows:
+
+
+
+Procesos en Linux:
+1) Se crean dos procesos, uno (el padre) crea el otro proceso y el proceso creado (el hijo) ejecuta el comando 'ls' enlistando todos los documentos que hay en la carpeta actual.
+2) Explicacon:
+	1. Paso 1: El proceso padre ejecuta un syscall para crear un nuevo proceso.
+	2. Paso 2: El syscall es despachado y se crea el proceso hijo.
+	3. Paso 3: En la perspectiva del proceso padre, este ejecuta el bloque if. Debido a que el pid no es 0 (por ser proceso padre), ejecuta la clausura 'else'. Luego imprime a pantalla el mensaje 'I am your father <id>' y luego espera a que el proceso hijo termine su ejecucion.
+	En la perspectiva del proceso hijo, este ejecuta el mismo bloque if. Debido a que el pid es 0 (por ser proceso hijo), ejecuta la clausura 'else if'. Imprime a pantalla 'I am the child <id>', luego ejecuta el comando 'ls' y luego de eso termina el proceso.
+	4. Paso 4: Una vez terminado el proceso hijo, el padre vuelve a retomar su ejecucion, imprime en pantalla 'Child Complete: I’ll never join you!!' y por ultimo termina su ejecucion.
+	5. Paso 5: Fin del programa
+3) Si, cambian los resultados - Ahora el padre termina de primero su ejecucion y luego el hijo.
+Esto se debe a que ahora, el padre no espera a que el hijo termine, si no sigue de largo con el programa hasta que termina.
+4) Que dependiendo si es padre o hijo el proceso, cada uno ejecuta un set de instrucciones distinto.
+5) * Seccion que ejecuta el nuevo proceso: linea 7, 11 y 12
+	* Al momento de ejecutar la instruccion "fork()", se crea un proceso hijo 
+	* Al momento de ejecutar la instruccion "execlp()", el proceso hijo es reemplazado por uno nuevo que ejecuta el comando shell 'ls'.

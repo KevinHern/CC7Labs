@@ -13,7 +13,7 @@ int main(){
 	} else {				/* parent process */
 		/* parent will wait for the child to complete*/
 		printf("I am your father %d\n",pid);
-		wait(NULL);
+		//wait(NULL);
 		printf("Child Complete: I’ll never join you!! \n");
 		exit(0);
 	}
