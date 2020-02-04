@@ -1,8 +1,7 @@
-#include <cstdlib>
-#include <iostream>
+#include <stdlib.h>
 #include <windows.h>
 #include <stdio.h>
-using namespace std;
+//using namespace std;
 int main( VOID ) {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -29,7 +28,7 @@ int main( VOID ) {
 		return -1;
 	}
 	// Wait until child process exits.
-	WaitForSingleObject( pi.hProcess, INFINITE );
+	//WaitForSingleObject( pi.hProcess, INFINITE );
 	// Close process and thread handles.
 	CloseHandle( pi.hProcess );
 	CloseHandle( pi.hThread );

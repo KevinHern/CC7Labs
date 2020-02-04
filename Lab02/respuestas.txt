@@ -1,6 +1,9 @@
 Procesos en Windows:
-
-
+1) Levanta Paint. El programa espera hasta que paint se cierra y luego espera el ingreso de cualquier tecla y termina su ejecucion.
+3) mspainte.exe es un child process del programa.
+4) Se cierra el parent process pero mspaint sigue en ejecucion. 
+5) mspaint.exe ya no es un nodo hijo del nodo del programa
+6) Si, el proceso padre espera a que finalice la ejecucion del proceso hijo.
 
 Procesos en Linux:
 1) Se crean dos procesos, uno (el padre) crea el otro proceso y el proceso creado (el hijo) ejecuta el comando 'ls' enlistando todos los documentos que hay en la carpeta actual.
