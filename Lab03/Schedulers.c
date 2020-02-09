@@ -133,6 +133,7 @@ void FCFS(void *vargp) {
 
 
 	printf(" --> FCFS\n");
+	fcfs_schedule(&queue);
 	output(0);
 } 
 

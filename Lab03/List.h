@@ -11,8 +11,8 @@ struct node {
 	int wt;			//waiting time
 	int rt;			//response time
 	int tt;			//turnaround time
+	char scheduled;
 	struct node *next;
-
 	char * name;
 };
 
