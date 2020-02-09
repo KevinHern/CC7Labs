@@ -20,6 +20,8 @@ void fcfs_schedule(struct list *l){
 				kernel_time = kernel_time + n->bt;
 				n->et = kernel_time;
 				n->wt = kernel_time - n->at - n->bt;
+				n->rt = n->wt;
+				n->tt = n->et - at;
 				++dispatched;
 			}
 			else
