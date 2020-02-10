@@ -2,11 +2,14 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include "List.h"
-#include "fcfs.h"
+#include "schedule.h"
 #include <string.h>
 
 struct list queue;
+struct list priority_queue;
+struct node ** processes;
+
+uint nprocess;
 
 void replace_char(char * str, char find, char replace){
 	int i = 0;
@@ -93,7 +96,6 @@ void load_processes(){
 		{
 			*(buffer + i) = '\0';
 			create_process(buffer);
-			//printf("%s\n", buffer);
 			*buffer = '\0';
 			i = 0;
 		}
@@ -106,51 +108,44 @@ void load_processes(){
 		
 	}
 	free(buffer);
-
-	//printf("%d\n", length(&queue));
-
 	fclose(fp);
 }
 
-void output(void *vargp) {
-	printf("|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n");
-	printf("|PXX\t|QU\t|QM\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n");
-	printf("|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n");
-
-	struct node *n = &queue.head;
-	while((n = n->next) != NULL){
-		printf("|%s\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t| \n",
-			n->name, n->qu, n->qm, n->at, n->bt, n->et, n->wt, n->rt, n->tt);
-		printf("|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n");
-	}
-} 
 
 void FCFS(void *vargp) {
-	
-	
-
-
-
-
 	printf(" --> FCFS\n");
+	init_list(&queue);
+	fcfs_fill_queue(&queue, processes, nprocess);
 	fcfs_schedule(&queue);
-	output(0);
+	output(processes, nprocess, 0);
 } 
 
-void PS(void *vargp) {
+void PS(void *vargp) {	
 	printf(" --> PS\n");
-	output(0);
+	init_list(&priority_queue);
+	ps_schedule(&priority_queue, processes, nprocess);
+	output(processes, nprocess, 1);
 } 
 
 void RR(void *vargp) {
 	printf(" --> RR\n");
-	output(0);
+	//output(0);
 } 
 
 void MLFQS(void *vargp) {
 	printf(" --> MLFQS\n");
-	output(0);
+	//output(0);
 } 
+
+void fill_process_array(){
+	nprocess = length(&queue);
+	processes = malloc(nprocess*sizeof(struct list));
+
+	for (int i = 0; i < nprocess; ++i)
+	{
+		*(processes + i) = pop(&queue); 
+	}
+}
 
 int menu(){
 	int tmp;
@@ -159,11 +154,16 @@ int menu(){
 	return tmp;
 }
 
+
+
 // C Concepts 
 // https://gist.github.com/Integralist/6c35d4f26c0c7bf5bdce7b95cfa906b3
 int main ( int argc , char * argv []) {
+
+	
 	printf("\n\n\n/*\tTERMINAR EL PROGRAMA USANDO LA OPCION 0, HAY MALLOCS INVOLUCRADOS!!\t*/\n");
 	load_processes();
+	fill_process_array();
 	int op = 9;
 	pid_t pid;
 	while (op > 0){
@@ -196,5 +196,6 @@ int main ( int argc , char * argv []) {
 	printf("List of processes must be empty now: ");
 	printf("%d", length(&queue)); //Number displayed should be 0!!!!!!!!!
 	printf("\tprocesses\n");
+	free(processes);
 	return 0;
 }

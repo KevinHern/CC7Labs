@@ -76,14 +76,67 @@ void add_back(struct list *l, struct node *n){
 	}
 }
 
-/*
-void list_add_front(struct list *l, struct node *n){
-	n->prev = NULL;
-	n->next = &l->head;
-	l->head.prev = n;
-	l->head = *n;
+void insert(struct list * pq, struct node * newnode, struct node * reference){
+	newnode->next = reference;
+	newnode->prev = reference->prev;
+
+	if (reference->prev == NULL)
+	{
+		pq->head.next = newnode;
+	}
+	else
+	{
+		reference->prev->next = newnode;
+	}
+
+	reference->prev = newnode;
+
 }
-*/
+
+void reschedule(struct list *pq, struct node * newnode, struct node * threshold) {
+	if (threshold)
+	{
+		insert(pq, newnode, threshold);
+	}
+	else
+	{
+
+		add_back(pq, newnode);
+	}
+}
+
+void priority_add(struct list *pq, struct node *n){
+	
+	struct node * dog = &pq->head;
+	if (is_empty(pq))
+	{
+		add_back(pq, n);
+	}
+	else
+	{	
+		while((dog = dog->next) != NULL){
+			if (dog->v > n->v)
+			{
+				reschedule(pq, n, dog);
+				break;
+			}
+			else
+			{
+				if (dog->next == NULL)
+				{
+
+					reschedule(pq, n, NULL);
+					break;
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+	}	
+}
+
 
 struct node * pop(struct list *l){
 	if (is_empty(l))
@@ -95,8 +148,27 @@ struct node * pop(struct list *l){
 		struct node * n = l->head.next;
 		l->head.next = n->next;
 		l->head.prev = NULL;
+		if (l->head.next != NULL)
+		{
+			l->head.next->prev = NULL;
+		}
 		n->next = NULL;
 		return n;
 	}
 	
+}
+
+void print_list(struct list * l){
+	struct node * n = &l->head;
+
+	if (is_empty(l))
+	{
+		printf("List is empty\n");
+	}
+	else
+	{
+		while((n = n->next) != NULL){
+			printf("Proceso %s\n", n->name);
+		}
+	}
 }
