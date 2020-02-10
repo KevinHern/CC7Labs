@@ -1,7 +1,12 @@
 #include <stdlib.h>
 #include "List.h"
 
-void throughput(struct node ** array, uint length, int isPs){
+// variable 'mode' is used to determine what to display on screen
+// Mode = 1 is Priority Scheduling
+// Mode = 2 is Round Robin
+// Mode = 0 Every other schedule
+
+void throughput(struct node ** array, uint length, int mode){
 	float pr, qu, qm, at, bt, et, wt, rt, tt;
 	pr = 0;
 	qu = 0;
@@ -36,29 +41,42 @@ void throughput(struct node ** array, uint length, int isPs){
 	rt = (float)(rt / length);
 	tt = (float)(tt / length);
 
-	if (isPs)
+	if (mode == 1)
 	{
-		printf("|TH\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t| \n",
-			 pr, qu, qm, at, bt, et, wt, rt, tt);
+		printf("|TH\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t| \n",
+			 pr, at, bt, et, wt, rt, tt);
 	}
-	else
+	else if(mode == 2)
 	{
 		printf("|TH\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t| \n",
 			 qu, qm, at, bt, et, wt, rt, tt);
 	}
+	else
+	{
+		printf("|TH\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t| \n",
+			 at, bt, et, wt, rt, tt);
+	}
 }
 
-void output(struct node ** array, uint length, int isPs) {
-	char * separator = (isPs)?
-			"|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n" :
-			"|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n";
+void output(struct node ** array, uint length, int mode) {
+	char * separator;
+	char * header;
 
-	char * header = (isPs)?
-			"|PXX\t|PR\t|QU\t|QM\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n" :
-			"|PXX\t|QU\t|QM\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n" ;
-			
-
-
+	if (mode == 1)
+	{
+		separator = "|-------|-------|-------|-------|-------|-------|-------|-------| \n";
+		header = "|PXX\t|PR\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n";
+	}
+	else if (mode == 2)
+	{
+		separator = "|-------|-------|-------|-------|-------|-------|-------|-------|-------| \n";
+		header = "|PXX\t|QU\t|QM\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n";
+	}
+	else
+	{
+		separator = "|-------|-------|-------|-------|-------|-------|-------| \n";
+		header = "|PXX\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n" ;
+	}
 
 	printf("%s", separator);
 	printf("%s", header);
@@ -66,17 +84,17 @@ void output(struct node ** array, uint length, int isPs) {
 
 	struct node * n;
 
-	if (isPs)
+	if (mode == 1)
 	{
 		for (int i = 0; i < length; ++i)
 		{
 			n = *(array + i);
-			printf("|%s\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t| \n",
-				n->name, n->v, n->qu, n->qm, n->at, n->bt, n->et, n->wt, n->rt, n->tt);
+			printf("|%s\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t| \n",
+				n->name, n->v, n->at, n->bt, n->et, n->wt, n->rt, n->tt);
 			printf("%s", separator);
 		}
 	}
-	else
+	else if (mode == 2)
 	{
 		for (int i = 0; i < length; ++i)
 		{
@@ -86,8 +104,18 @@ void output(struct node ** array, uint length, int isPs) {
 			printf("%s", separator);
 		}
 	}
+	else
+	{
+		for (int i = 0; i < length; ++i)
+		{
+			n = *(array + i);
+			printf("|%s\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t| \n",
+				n->name, n->at, n->bt, n->et, n->wt, n->rt, n->tt);
+			printf("%s", separator);
+		}
+	}
 
-	throughput(array, length, isPs);
+	throughput(array, length, mode);
 	printf("%s", separator);
 } 
 
