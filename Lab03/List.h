@@ -137,6 +137,16 @@ void priority_add(struct list *pq, struct node *n){
 	}	
 }
 
+void add_front(struct list * l, struct node * newhead){
+	newhead->next = l->head.next;
+	newhead->prev = NULL;
+
+	l->head.next->prev = newhead;
+
+	l->head.next = newhead;
+
+}
+
 
 struct node * pop(struct list *l){
 	if (is_empty(l))

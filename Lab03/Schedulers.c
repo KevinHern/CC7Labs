@@ -7,6 +7,8 @@
 
 struct list queue;
 struct list priority_queue;
+struct list queue_rr1;
+struct list queue_rr2;
 struct node ** processes;
 
 uint nprocess;
@@ -73,13 +75,11 @@ void create_process(char * str){
 	
 }
 
-void free_list(){
+void free_processes(){
 
-	struct node * n;
-
-	while((n = pop(&queue)) != NULL ){
-		free(n->name);
-		free(n);
+	for (int i = 0; i < nprocess; ++i)
+	{
+		free((*(processes + i))->name);
 	}
 }
 
@@ -144,8 +144,17 @@ void RR(void *vargp) {
 } 
 
 void MLFQS(void *vargp) {
+	init_list(&queue);
+	init_list(&queue_rr1);
+	init_list(&queue_rr2);
 	printf(" --> MLFQS\n");
-	//output(0);
+	printf("Ingrese el 'Quantum' que desee para la cola Round Robin 1: ");
+	int quantum1 =  set_quantum();
+	printf("Ingrese el 'Quantum' que desee para la cola Round Robin 2: ");
+	int quantum2 =  set_quantum();
+	reset_processes();
+	mlfqs_schedule_no_priority(&queue_rr1, &queue_rr2, &queue, processes, nprocess, quantum1, quantum2);
+	output(processes, nprocess, 3);
 } 
 
 void fill_process_array(){
@@ -203,7 +212,7 @@ int main ( int argc , char * argv []) {
 	}
 
 	//FREEING EVERY MALLOC 
-	free_list();
+	free_processes();
 	printf("List of processes must be empty now: ");
 	printf("%d", length(&queue)); //Number displayed should be 0!!!!!!!!!
 	printf("\tprocesses\n");
