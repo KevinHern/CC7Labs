@@ -216,6 +216,101 @@ void ps_schedule(struct list * queue, struct node ** array, int length){
 		//printf("Dispatched: %d\n", dispatched);
 		//printf("\n\n\n");
 		//fgets(str, 5, stdin);
+	}	
+}
+
+void rr_schedule(struct list * queue, struct node ** array, int length, int quantum){
+	char str[5];
+	uint kernel_time = 0;
+	uint executing = 0;
+	struct node * inExecution;
+
+	uint qm_counter = 0;
+
+	int dispatched = 0;
+
+	char * str1 = "No process in execution";
+
+	for (; dispatched != length; ++kernel_time)
+	{
+		printf("At kernel time: %d\n", kernel_time);
+		for (int i = 0; i < length; ++i)
+		{
+			if ((*(array + i))->at == kernel_time)
+			{
+				add_back(queue, *(array + i));
+			}
+			else
+			{
+				continue;
+			}
+		}
+		//printf("Processes in Queue: \n");
+		//print_list(queue);
+		
+
+		if (executing)
+		{
+			inExecution->workDone++;
+			qm_counter++;
+			if (inExecution->workDone == inExecution->bt)
+			{
+				printf("Termino un proceso\n");
+				executing = 0;
+				dispatched++;
+				
+				qm_counter = 0;
+
+				/* Setting Process Properties */
+				inExecution->et = kernel_time;
+				inExecution->wt = kernel_time - inExecution->at - inExecution->bt;
+				//inExecution->rt = inExecution->wt;
+				inExecution->tt = inExecution->et - inExecution->at;
+				inExecution = NULL;
+			}
+
+			if (qm_counter == quantum)
+			{
+				printf("/*Context Switch*/\n");
+				qm_counter = 0;
+				executing = 0;
+				if (inExecution != NULL)
+				{
+					add_back(queue, inExecution);
+					inExecution = NULL;
+				}
+				/* Switch context */
+
+			}
+		}
+
+		if (executing == 0)
+		{
+			if (is_empty(queue) != 1)
+			{
+				inExecution = pop(queue);
+				if (inExecution->workDone == 0)
+				{
+					inExecution->rt = kernel_time - inExecution->at;
+				}
+				executing = 1;
+				/*				
+				inExecution->et = estimated_finish_time;
+				inExecution->wt = estimated_finish_time - inExecution->at - inExecution->bt;
+				inExecution->rt = inExecution->wt;
+				inExecution->tt = inExecution->et - inExecution->at;
+				*/
+			}
+		}			
+
+		printf("Processes in Queue: \n");
+		print_list(queue);
+
+
+		printf("Process in execution: %s\n", (inExecution)? inExecution->name: str1 );
+		printf("Length: %d\n", length);
+		printf("Dispatched: %d\n", dispatched);
+		printf("\n\n\n");
+		fgets(str, 5, stdin);
 	}
-	
 }

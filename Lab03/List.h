@@ -11,7 +11,7 @@ struct node {
 	int wt;			//waiting time
 	int rt;			//response time
 	int tt;			//turnaround time
-	char scheduled;
+	uint workDone;
 	struct node *next;
 	char * name;
 };
@@ -153,6 +153,28 @@ struct node * pop(struct list *l){
 			l->head.next->prev = NULL;
 		}
 		n->next = NULL;
+		return n;
+	}
+	
+}
+
+struct node * get_at(struct list *l, int index){
+	if (is_empty(l))
+	{
+		return NULL;
+	}
+	else if(length(l) - 1 < index)
+	{
+		return NULL;
+	}
+	else
+	{
+		struct node * n = &l->head;
+
+		for (int i = 0; i <= index; ++i)
+		{
+			n = n->next;
+		}
 		return n;
 	}
 	

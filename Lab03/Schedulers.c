@@ -11,16 +11,22 @@ struct node ** processes;
 
 uint nprocess;
 
-void replace_char(char * str, char find, char replace){
-	int i = 0;
-	while(*(str+i)!='\0')
-    {
-        if(*(str+i) == find)
-        {
-            *(str+i) = replace;
-        }
-        i++;
-    }
+int set_quantum(){
+	int qm;
+	scanf("%d", &qm);
+
+	for (int i = 0; i < nprocess; ++i)
+	{
+		(*(processes + i))->qm = qm;
+	}
+	return qm;
+}
+
+void reset_processes(){
+	for (int i = 0; i < nprocess; ++i)
+	{
+		(*(processes + i))->workDone = 0;
+	}
 }
 
 void create_process(char * str){
@@ -128,8 +134,13 @@ void PS(void *vargp) {
 } 
 
 void RR(void *vargp) {
+	init_list(&queue);
 	printf(" --> RR\n");
-	//output(0);
+	printf("Ingrese el 'Quantum' que desee para el procesador: ");
+	int quantum =  set_quantum();
+	reset_processes();
+	rr_schedule(&queue, processes, nprocess, quantum);
+	output(processes, nprocess, 2);
 } 
 
 void MLFQS(void *vargp) {
