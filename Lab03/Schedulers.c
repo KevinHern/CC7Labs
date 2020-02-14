@@ -180,7 +180,7 @@ int menu(){
 // https://gist.github.com/Integralist/6c35d4f26c0c7bf5bdce7b95cfa906b3
 int main ( int argc , char * argv []) {
 
-	
+	printf("\n\n\n/*\tARCHIVO QUE TIENE LOS PROCESOS (listprocess.cpu) DEBE TERMINAR CON UNA NUEVA LINEA PARA QUE EL PARSEO DEL ARCHIVO FUNCIONE!!\t*/\n\n");
 	printf("\n\n\n/*\tTERMINAR EL PROGRAMA USANDO LA OPCION 0, HAY MALLOCS INVOLUCRADOS!!\t*/\n");
 	load_processes();
 	fill_process_array();
@@ -213,9 +213,7 @@ int main ( int argc , char * argv []) {
 
 	//FREEING EVERY MALLOC 
 	free_processes();
-	printf("List of processes must be empty now: ");
-	printf("%d", length(&queue)); //Number displayed should be 0!!!!!!!!!
-	printf("\tprocesses\n");
+	printf("List of processes must be empty now\n");
 	free(processes);
 	return 0;
 }
