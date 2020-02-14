@@ -49,7 +49,7 @@ void throughput(struct node ** array, uint length, int mode){
 	else if(mode == 1)
 	{
 		printf("|TH\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t|%.2f\t| \n",
-			 pr, at, bt, et, wt, rt, tt);
+			 at, bt, pr, et, wt, rt, tt);
 	}
 	else if (mode == 2)
 	{
@@ -75,7 +75,7 @@ void output(struct node ** array, uint length, int mode) {
 	else if (mode == 1)
 	{
 		separator = "|-------|-------|-------|-------|-------|-------|-------|-------| \n";
-		header = "|PXX\t|PR\t|AT\t|BT\t|ET\t|WT\t|RT\t|TT\t|\n";
+		header = "|PXX\t|AT\t|BT\t|PR\t|ET\t|WT\t|RT\t|TT\t|\n";
 	}
 	else if (mode == 2)
 	{
@@ -110,7 +110,7 @@ void output(struct node ** array, uint length, int mode) {
 		{
 			n = *(array + i);
 			printf("|%s\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t|%d\t| \n",
-				n->name, n->v, n->at, n->bt, n->et, n->wt, n->rt, n->tt);
+				n->name, n->at, n->bt, n->v, n->et, n->wt, n->rt, n->tt);
 			printf("%s", separator);
 		}
 	}
@@ -206,8 +206,6 @@ void ps_schedule(struct list * queue, struct node ** array, int length){
 				continue;
 			}
 		}
-		//printf("Processes in Queue: \n");
-		//print_list(queue);
 		
 
 		if (executing && estimated_finish_time == kernel_time)
@@ -231,11 +229,6 @@ void ps_schedule(struct list * queue, struct node ** array, int length){
 				inExecution->tt = inExecution->et - inExecution->at;
 			}
 		}			
-		//printf("Process in execution: %s\n", (inExecution)? inExecution->name: str1 );
-		//printf("Length: %d\n", length);
-		//printf("Dispatched: %d\n", dispatched);
-		//printf("\n\n\n");
-		//fgets(str, 5, stdin);
 	}	
 }
 
