@@ -570,7 +570,7 @@ void mlfqs_schedule_no_priority(struct list * rr1, struct list * rr2, struct lis
 
 	for (; dispatched != length; ++kernel_time)
 	{
-		printf("At kernel time: %d\n", kernel_time);
+		//printf("At kernel time: %d\n", kernel_time);
 		for (int i = 0; i < length; ++i)
 		{
 			if ((*(array + i))->at == kernel_time)
@@ -593,7 +593,7 @@ void mlfqs_schedule_no_priority(struct list * rr1, struct list * rr2, struct lis
 
 		if (executing)
 		{
-			printf("Process in execution: %s\n", (inExecution)? inExecution->name: str1 );
+			//printf("Process in execution: %s\n", (inExecution)? inExecution->name: str1 );
 			inExecution->workDone++;
 
 			if (active_queue == 1)
@@ -750,7 +750,7 @@ void mlfqs_schedule_no_priority(struct list * rr1, struct list * rr2, struct lis
 					}
 				}
 			}
-			printf("Process to execute: %s\n", (inExecution)? inExecution->name: str1 );
+			//printf("Process to execute: %s\n", (inExecution)? inExecution->name: str1 );
 		}			
 
 		//printf("Processes in Queue: \n");
@@ -758,9 +758,9 @@ void mlfqs_schedule_no_priority(struct list * rr1, struct list * rr2, struct lis
 
 
 		
-		printf("Length: %d\n", length);
-		printf("Dispatched: %d\n", dispatched);
-		printf("\n\n\n");
-		fgets(str, 5, stdin);
+		//printf("Length: %d\n", length);
+		//printf("Dispatched: %d\n", dispatched);
+		//printf("\n\n\n");
+		//fgets(str, 5, stdin);
 	}
 }
