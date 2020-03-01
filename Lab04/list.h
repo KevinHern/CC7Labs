@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #define ASCENDING
 #define DESCENDING
@@ -60,6 +61,30 @@ void print_list(struct list * l){
 	{
 		while((n = n->next) != NULL){
 			printf("Requirement Block: %d\n", n->block);
+		}
+	}
+}
+
+void print_as_queue(struct list * l){
+	struct node * n = &l->head;
+
+	if (is_empty(l))
+	{
+		printf("List is empty\n");
+	}
+	else
+	{
+		printf("Requirements queue: [");
+		while((n = n->next) != NULL){
+			printf("%d", n->block);
+			if (n->next)
+			{
+				printf(", ");
+			}
+			else
+			{
+				printf("]\n");
+			}
 		}
 	}
 }
@@ -252,7 +277,7 @@ struct node * get_min(struct list * l) {
 
 struct node * get_max(struct list * l) {
 	struct node * tmp = &l->head;
-	int max = 0;
+	int max = 1;
 	struct node * max_node = NULL;
 
 	while((tmp = tmp->next) != NULL){

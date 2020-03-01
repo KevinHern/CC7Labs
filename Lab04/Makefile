@@ -1,5 +1,5 @@
 Schedulers: 
-	gcc -lpthread ./lab4.c -o ./Schedulers && ./Schedulers
+	gcc ./lab4.c ./Schedulers.h -lm -o ./Schedulers && ./Schedulers
 
 clean: 
 	rm -f ./Schedulers

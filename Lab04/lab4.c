@@ -20,10 +20,13 @@ int read_requirement(){
 
 void read_requirements(){
 	printf("### BEGIN ###\n");
+
+	printf("----- The Disk has blocks ranging from 1 to 100 -----\n");
+	printf("----- To end the process of registering disk requirements, just enter 0 -----\n\n");
 	while (1){
 		int op = read_requirement();
-		if ( op > 100 ){
-			printf("### END ###\n");
+		if ( op == 0 ){
+			printf("### END ###\n\n");
 			break;
 		}
 		else {
@@ -35,7 +38,6 @@ void read_requirements(){
 			add_back(&requirements_queue, temp_requirement);
 		}
 	}
-	printf("%d\n", length(&requirements_queue));
 }
 
 /* MEMORY MANAGEMENT SECTION */
@@ -72,7 +74,7 @@ int main ( int argc , char * argv []) {
 
 	// Reading every requirement
 	printf("### DISK REQUIREMENTS ###\n");
-	printf("Register the disk requirements one by one!!!!\n");
+	printf("Register the disk requirements one by one!!!!\n\n");
 	read_requirements();
 
 	//print_list(&requirements_queue);
@@ -85,7 +87,9 @@ int main ( int argc , char * argv []) {
 	
 
 	/* Schedules */
-	printf("### DISK SCHEDULERS ###\n\n");
+	printf("\n### DISK SCHEDULERS SIMULATIONS###\n");
+
+	print_as_queue(&requirements_queue);
 
 	// FIFO SCHEDULE
 	FIFO(dheader, &requirements_queue);
@@ -94,7 +98,8 @@ int main ( int argc , char * argv []) {
 	order(&requirements_queue, 1);
 	SCAN(dheader, &requirements_queue);
 
-
+	// CIRCULAR SCAN
+	CSCAN(dheader, &requirements_queue);
 
 	//SSTF
 	SSTF(dheader, &requirements_queue);
