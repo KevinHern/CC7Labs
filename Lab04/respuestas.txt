@@ -1,0 +1,20 @@
+Pregunta 1:
+No hay mejor algoritmo - es dependiendo de como van ingresando los requerimientos de disco.
+Para casos lineales (es decir, cuando los requerimientos entrantes siempre son bloques con identificadores que siempre son mayores que el anterior o vice versa), FIFO y SSTF tienen el mismo performance, ahora SCAN y CSCAN tambien pueden tener el mismo performance pero depende en que posicion se encuentre el cabezal del disco y hacia donde se dirige.
+
+Ahora para casos donde constantemente se tiene que ir a lugares diferentes del disco (como 'saltando' de un lugar a otro), FIFO tiene muy bajo performance, mientras que SCAN, CSCAN y SSTF tienen mejor performance.
+CSCAN parece tener un mejor performance debido a que trata de darle un tiempo uniforme de espera a todos los requerimientos de disco, mientras que SCAN beneficia mas a los bloques mas cercanos al centro del plato del disco.
+SSTF por otra parte, puede provocar en algun punto starvation, pero su performance es tambien muy bueno.
+
+Pregunta 2:
+Un SSD es un tipo de memoria flash que no tiene partes mecanicas como un HDD.
+Guarda la informacion usando componentes electronicos (en este caso, compuertas logicas debido a que esta basado en memoria flash).
+Es mucho mas rapido que un HDD y no esta expuesto a mechanical o media damages.
+
+Pregunta 3:
+El Scheduling que tiene sentido para un SSD es FIFO (o FCFS), debido a que los otros algoritmos restantes estan pensados en optimizar el movimiento del cabezal del disco.
+
+Pregunta 4:
+Si, existen Disk Scheduling para un SSD.
+Aun es un dispositivo de almacenamiento, y es necesario tener politicas para el acceso/escritura de informacion en el dispositivo.
+Un scheduler que altualmente existe se llama Linux Noop y utiliza politicas de tipo FIFO (FCFS)
