@@ -32,15 +32,24 @@ Que hace un inge?
 int capacity = 4;
 int globalDirection = 0;
 int leader = 0;
+
+// Mutexes
 pthread_mutex_t mutex_1 = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_2 = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutex_print = PTHREAD_MUTEX_INITIALIZER;
+
+// Condition Mutexes
 pthread_mutex_t condition1_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t condition2_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t left_cond  = PTHREAD_COND_INITIALIZER;
-pthread_cond_t right_cond  = PTHREAD_COND_INITIALIZER;
-pthread_cond_t leader_cond  = PTHREAD_COND_INITIALIZER;
 
+// Extra Mutexs
+pthread_mutex_t mutex_print = PTHREAD_MUTEX_INITIALIZER;	// For printing data atomiclally
+
+// Condition Variables
+pthread_cond_t left_cond  = PTHREAD_COND_INITIALIZER;		// Left Queue
+pthread_cond_t right_cond  = PTHREAD_COND_INITIALIZER;		// Right Queue
+pthread_cond_t leader_cond  = PTHREAD_COND_INITIALIZER;		// Wait untill the leader finishes crossing
+
+// Structure that represents arguments
 struct arg {
 	int direction;
 	int id;
@@ -51,6 +60,7 @@ struct arg {
 
 void accessBridge(struct arg * args) {
 	//printf("Entra a Access Bridge\n");
+
 	/* Make sure to check that there is enough space to cross, otherwise wait */
 	pthread_mutex_lock( &condition1_mutex );
 	while(capacity == 0 || (capacity < 4 && globalDirection != args->direction)) {
@@ -64,6 +74,7 @@ void accessBridge(struct arg * args) {
 	pthread_mutex_unlock( &condition1_mutex );
 
 
+	// Cross Bridge and make yourself the leader if you are the first one to cross
 	pthread_mutex_lock( &mutex_1 );
 	if (capacity == 4){
 		leader = args->id;
@@ -71,11 +82,14 @@ void accessBridge(struct arg * args) {
 	--capacity;
 	globalDirection = args->direction;
 	pthread_mutex_unlock( &mutex_1 );
+
 	//printf("Sale de Access Bridge\n");
 }
 
 void crossingBridge(struct arg * args) {
 	//printf("Entra a Cross Bridge\n");
+
+	// Crossing the bridge in the given direction
 	for(int i = 0; i < args->crossTime; i++) {
 		pthread_mutex_lock( &mutex_print );
 		if(leader == args->id) {
@@ -96,6 +110,8 @@ void crossingBridge(struct arg * args) {
 }
 
 void exitBridge(struct arg * args) {
+
+	// Wait for leader to finish crossing the bridge
 	pthread_mutex_lock( &condition2_mutex );
 	while(leader != 0 && leader != args->id) {
 		pthread_mutex_lock( &mutex_print );
@@ -111,17 +127,24 @@ void exitBridge(struct arg * args) {
 		pthread_mutex_unlock( &mutex_print );
 		pthread_cond_wait(&leader_cond, &condition2_mutex);
 	}
+
+	// Make yourself the leader once the leader exits
 	pthread_mutex_lock( &mutex_2 );
 	leader = args->id;
 	pthread_mutex_unlock( &mutex_2 );
+
 	pthread_mutex_unlock( &condition2_mutex );
 
+
+	// Tell everyone in the bridge that you (the leader) finished crossing the bridge
 	pthread_mutex_lock( &mutex_2 );
 	leader = 0;
 	printf("(LEADER) Engineer %d finished crossing the bridge\n", args->id);
 	++capacity;
 	pthread_cond_broadcast( &leader_cond );
 	pthread_mutex_unlock( &mutex_2 );
+
+	// Signal everyone else to try to pass the bridge
 	pthread_cond_broadcast( &left_cond );
 	pthread_cond_broadcast( &right_cond );
 }
