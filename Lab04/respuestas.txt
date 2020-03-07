@@ -17,4 +17,4 @@ El Scheduling que tiene sentido para un SSD es FIFO (o FCFS), debido a que los o
 Pregunta 4:
 Si, existen Disk Scheduling para un SSD.
 Aun es un dispositivo de almacenamiento, y es necesario tener politicas para el acceso/escritura de informacion en el dispositivo.
-Un scheduler que altualmente existe se llama Linux Noop y utiliza politicas de tipo FIFO (FCFS)
+Un scheduler que actualmente existe se llama Linux Noop y utiliza politicas de tipo FIFO (FCFS)

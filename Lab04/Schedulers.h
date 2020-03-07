@@ -12,7 +12,7 @@ double std(float * distances, float mean, int length) {
 		acc += pow(distances[i] - mean, 2);
 	}
 	//printf("Acc: %0.2f\t", (float)acc);
-	acc = (float)(acc/length);
+	acc = (float)(acc/(length-1));
 	//printf("Division: %0.2f\t", acc);
 
 	//printf("SQRT: %0.2f\n", sqrt(acc));
