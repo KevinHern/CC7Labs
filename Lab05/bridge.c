@@ -212,7 +212,7 @@ void exitBridge(struct arg * args) {
 
 void * crossBridge(void * arg) {
 	struct arg * args = (struct arg *)arg;
-	sleep(rand() % 3);
+	sleep(rand() % 4);
 
 	struct node * engineer = malloc(sizeof(struct node));
 	engineer->ing = args->id;
