@@ -93,7 +93,7 @@ void accessBridge(struct arg * args) {
 	engineer->ing = args->id;
 	add_back(&leaderQueue, engineer);
 	//printf("# ADDING #> Leader Queue: ");
-	print_list(&leaderQueue);
+	//print_list(&leaderQueue);
 	pthread_mutex_unlock( &leader_mutex );
 	
 	globalDirection = args->direction;
@@ -113,10 +113,10 @@ void crossingBridge(struct arg * args) {
 		}
 		printf("> Engineer %d is crossing the bridge ", args->id);
 		if (args->direction){
-			printf("to the RIGHT\n");
+			printf("to the LEFT\n");
 		}
 		else {
-			printf("to the LEFT\n");
+			printf("to the RIGHT\n");
 		}
 		
 		pthread_mutex_unlock( &mutex_print );
@@ -131,7 +131,7 @@ void exitBridge(struct arg * args) {
 	pthread_mutex_lock( &condition2_mutex );
 	while(leader != args->id) {
 		pthread_mutex_lock( &mutex_print );
-		printf("> Current Leader: %d\n", leader);
+		//printf("> Current Leader: %d\n", leader);
 		printf("> Engineer %d is waiting for the others to finish crossing the bridge\n", args->id);
 
 		pthread_mutex_unlock( &mutex_print );
@@ -149,10 +149,10 @@ void exitBridge(struct arg * args) {
 	printf("# LEAVING #> (LEADER) Engineer %d finished crossing the bridge\n", args->id);
 
 	if(args->direction) {
-		free(removeEngineer(&rightQueue, args->id));
+		free(removeEngineer(&leftQueue, args->id));
 	}
 	else {
-		free(removeEngineer(&leftQueue, args->id));
+		free(removeEngineer(&rightQueue, args->id));
 	}
 
 	pthread_mutex_unlock( &mutex_print );
@@ -169,7 +169,7 @@ void exitBridge(struct arg * args) {
 	if(length(&leaderQueue) > 0) {
 		free(pop(&leaderQueue));
 		//printf("# REMOVING #> Leader Queue:");
-		print_list(&leaderQueue);
+		//print_list(&leaderQueue);
 
 		// Make the next one the leader
 		if (peek(&leaderQueue))
@@ -221,8 +221,21 @@ void * crossBridge(void * arg) {
 	pthread_mutex_lock( &mutex_print );
 
 	if(args->direction) {
+
+		printf("# ARRIVAL #> Engineer %d arrived to the bridge and wants to cross it to the LEFT\n", args->id);
 		
-		printf("# ARRIVAL #> Engineer %d arrived to the bridge\n", args->id);
+		printf("# ARRIVAL #> Right Queue: ");
+		print_list(&rightQueue);
+
+		add_back(&leftQueue, engineer);
+		printf("# ARRIVAL #> Left Queue: ");
+		print_list(&leftQueue);
+		
+
+	}
+	else {
+
+		printf("# ARRIVAL #> Engineer %d arrived to the bridge and wants to cross it to the RIGHT\n", args->id);
 		
 		add_back(&rightQueue, engineer);
 		printf("# ARRIVAL #> Right Queue: ");
@@ -231,19 +244,6 @@ void * crossBridge(void * arg) {
 		printf("# ARRIVAL #> Left Queue: ");
 		print_list(&leftQueue);
 
-	}
-	else {
-
-		printf("# ARRIVAL #> Engineer %d arrived to the bridge\n", args->id);
-		
-		printf("# ARRIVAL #> Right Queue: ");
-		print_list(&rightQueue);
-
-		add_back(&leftQueue, engineer);
-		printf("# ARRIVAL #> Left Queue: ");
-		print_list(&leftQueue);
-
-		
 	}
 
 	pthread_mutex_unlock( &mutex_print );
