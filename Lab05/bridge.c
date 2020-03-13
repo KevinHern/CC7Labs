@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "list.h"
 #define MAXENGS 4
 
 /* SITUACION */
@@ -40,6 +41,8 @@ pthread_mutex_t mutex_2 = PTHREAD_MUTEX_INITIALIZER;
 // Condition Mutexes
 pthread_mutex_t condition1_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t condition2_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t leader_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // Extra Mutexs
 pthread_mutex_t mutex_print = PTHREAD_MUTEX_INITIALIZER;	// For printing data atomiclally
@@ -55,6 +58,10 @@ struct arg {
 	int id;
 	int crossTime;
 };
+
+struct list rightQueue;
+struct list leftQueue;
+struct list leaderQueue;
 
 /* ENGINEERS THREAD FUNCTIONS SECTION */
 
@@ -80,6 +87,15 @@ void accessBridge(struct arg * args) {
 		leader = args->id;
 	}
 	--capacity;
+	
+	pthread_mutex_lock( &leader_mutex );
+	struct node * engineer = malloc(sizeof(struct node));
+	engineer->ing = args->id;
+	add_back(&leaderQueue, engineer);
+	//printf("# ADDING #> Leader Queue: ");
+	print_list(&leaderQueue);
+	pthread_mutex_unlock( &leader_mutex );
+	
 	globalDirection = args->direction;
 	pthread_mutex_unlock( &mutex_1 );
 
@@ -95,7 +111,7 @@ void crossingBridge(struct arg * args) {
 		if(leader == args->id) {
 			printf("(LEADER) ");
 		}
-		printf("Engineer %d is crossing the bridge ", args->id);
+		printf("> Engineer %d is crossing the bridge ", args->id);
 		if (args->direction){
 			printf("to the RIGHT\n");
 		}
@@ -113,39 +129,74 @@ void exitBridge(struct arg * args) {
 
 	// Wait for leader to finish crossing the bridge
 	pthread_mutex_lock( &condition2_mutex );
-	while(leader != 0 && leader != args->id) {
+	while(leader != args->id) {
 		pthread_mutex_lock( &mutex_print );
-
-		printf("Engineer %d is crossing the bridge ", args->id);
-		if (args->direction){
-			printf("to the RIGHT behind the leader\n");
-		}
-		else {
-			printf("to the LEFT behind the leader\n");
-		}
+		printf("> Current Leader: %d\n", leader);
+		printf("> Engineer %d is waiting for the others to finish crossing the bridge\n", args->id);
 
 		pthread_mutex_unlock( &mutex_print );
 		pthread_cond_wait(&leader_cond, &condition2_mutex);
 	}
 
-	// Make yourself the leader once the leader exits
-	pthread_mutex_lock( &mutex_2 );
-	leader = args->id;
-	pthread_mutex_unlock( &mutex_2 );
-
 	pthread_mutex_unlock( &condition2_mutex );
 
 
 	// Tell everyone in the bridge that you (the leader) finished crossing the bridge
-	pthread_mutex_lock( &mutex_2 );
-	leader = 0;
-	printf("(LEADER) Engineer %d finished crossing the bridge\n", args->id);
-	++capacity;
-	pthread_cond_broadcast( &leader_cond );
-	pthread_mutex_unlock( &mutex_2 );
 
-	// Signal everyone else to try to pass the bridge
-	pthread_cond_broadcast( &left_cond );
+	pthread_mutex_lock( &queue_mutex );
+	pthread_mutex_lock( &mutex_print );
+
+	printf("# LEAVING #> (LEADER) Engineer %d finished crossing the bridge\n", args->id);
+
+	if(args->direction) {
+		free(removeEngineer(&rightQueue, args->id));
+	}
+	else {
+		free(removeEngineer(&leftQueue, args->id));
+	}
+
+	pthread_mutex_unlock( &mutex_print );
+	pthread_mutex_unlock( &queue_mutex );
+
+	
+
+	
+
+	pthread_mutex_lock( &mutex_1 );
+	++capacity;
+
+	pthread_mutex_lock( &leader_mutex );
+	if(length(&leaderQueue) > 0) {
+		free(pop(&leaderQueue));
+		//printf("# REMOVING #> Leader Queue:");
+		print_list(&leaderQueue);
+
+		// Make the next one the leader
+		if (peek(&leaderQueue))
+		{
+			pthread_mutex_lock( &condition2_mutex );
+			leader = peek(&leaderQueue)->ing;
+			pthread_mutex_unlock( &condition2_mutex );
+			//printf("New Leader: %d\n", leader);/* code */	
+		}
+	}
+	
+	pthread_mutex_unlock( &leader_mutex );
+
+
+	
+	pthread_mutex_unlock( &mutex_1 );
+
+	
+	
+
+	/* Signal everyone else to try to pass the bridge */
+
+	// Signal first the ones who are crossing
+	pthread_cond_broadcast( &leader_cond );		
+
+	// Signal everyone else to try pass the bridge			
+	pthread_cond_broadcast( &left_cond );					
 	pthread_cond_broadcast( &right_cond );
 }
 
@@ -161,12 +212,44 @@ void exitBridge(struct arg * args) {
 
 void * crossBridge(void * arg) {
 	struct arg * args = (struct arg *)arg;
-	sleep(rand() % 10);
-	printf("Engineer %d arrived to the bridge\n", args->id);
+	sleep(rand() % 3);
+
+	struct node * engineer = malloc(sizeof(struct node));
+	engineer->ing = args->id;
+
+	pthread_mutex_lock( &queue_mutex );
+	pthread_mutex_lock( &mutex_print );
+
+	if(args->direction) {
+		
+		printf("# ARRIVAL #> Engineer %d arrived to the bridge\n", args->id);
+		
+		add_back(&rightQueue, engineer);
+		printf("# ARRIVAL #> Right Queue: ");
+		print_list(&rightQueue);
+
+		printf("# ARRIVAL #> Left Queue: ");
+		print_list(&leftQueue);
+
+	}
+	else {
+
+		printf("# ARRIVAL #> Engineer %d arrived to the bridge\n", args->id);
+		
+		printf("# ARRIVAL #> Right Queue: ");
+		print_list(&rightQueue);
+
+		add_back(&leftQueue, engineer);
+		printf("# ARRIVAL #> Left Queue: ");
+		print_list(&leftQueue);
+
+		
+	}
+
+	pthread_mutex_unlock( &mutex_print );
+	pthread_mutex_unlock( &queue_mutex );
 
 	accessBridge(args);
-
-	//printf("\nTransicion\n\n");
 	crossingBridge(args);
 	exitBridge(args);
 
@@ -189,6 +272,9 @@ int read_requirement(){
 int main(int argc, char const *argv[])
 {
 	/* Set and Initialize Random Number Generator */
+	init_list(&rightQueue);
+	init_list(&leftQueue);
+	init_list(&leaderQueue);
 	time_t t;
 	srand((unsigned) time(&t));
 
