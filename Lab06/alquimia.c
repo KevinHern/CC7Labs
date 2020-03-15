@@ -23,6 +23,7 @@ int H = 0;
 int N = 0;
 int O = 0;
 int reactionInProgress = 0;
+int reactions = 0;
 
 // Mutexes
 pthread_mutex_t O2_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -66,7 +67,7 @@ void reset(struct node * thread) {
 	{
 		used_molecules = 0;
 		pthread_mutex_lock( &mutex_print );	
-		printf("# REACTION FINISHED #> Reaction finished successfuly. But... is it water?\n");
+		printf("# REACTION %d FINISHED #> Reaction finished successfuly. But... is it water?\n", reactions);
 		pthread_mutex_unlock( &mutex_print );
 
 		pthread_mutex_lock( &reaction_mutex );	
@@ -128,6 +129,7 @@ void criticalSection(pthread_cond_t * cond_var, int oxy, int nit, int hyd, struc
 		hydrogen_waiters -= 3;
 		pthread_mutex_lock( &mutex_print );	
 		printf("# IMPORTANT EVENT #> FIRE!!!!!!!\n");
+		printf("\t###\tEPIC REACTION # %d\t###\n", ++reactions);
 		pthread_mutex_unlock( &mutex_print );
 		awake(oxy, nit, hyd);
 	}
@@ -135,17 +137,17 @@ void criticalSection(pthread_cond_t * cond_var, int oxy, int nit, int hyd, struc
 	if (thread->element == 2)
 	{
 		pthread_mutex_lock( &mutex_print );		
-		printf("> (id%d) Oxygen Molecule\n", thread->id);
+		printf("(REACTION %d)> (id%d) Oxygen Molecule\n", reactions, thread->id);
 		pthread_mutex_unlock( &mutex_print );	
 	}
 	else if(thread->element == 1) {
 		pthread_mutex_lock( &mutex_print );		
-		printf("> (id%d) Nitrogen Molecule\n", thread->id);
+		printf("(REACTION %d)> (id%d) Nitrogen Molecule\n", reactions, thread->id);
 		pthread_mutex_unlock( &mutex_print );	
 	}
 	else if(thread->element == 0) {
 		pthread_mutex_lock( &mutex_print );		
-		printf("> (id%d) Hydrogen Molecule\n", thread->id);
+		printf("(REACTION %d)> (id%d) Hydrogen Molecule\n", reactions, thread->id);
 		pthread_mutex_unlock( &mutex_print );
 	}
 
@@ -275,7 +277,7 @@ int main(int argc, char const *argv[])
 	// Read number of reactions
 	int reactions = read_requirement();
 	setMolecules(reactions);
-	printf("# Threads: %d\n", 6*reactions);
+	//printf("# Threads: %d\n", 6*reactions);
 
 	// Set necessary arrays
 	pthread_t threads[6*reactions];
