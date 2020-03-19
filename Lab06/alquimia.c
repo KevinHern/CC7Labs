@@ -67,7 +67,7 @@ void reset(struct node * thread) {
 	{
 		used_molecules = 0;
 		pthread_mutex_lock( &mutex_print );	
-		printf("# REACTION %d FINISHED #> Reaction finished successfuly. But... is it water?\n", reactions);
+		printf("# REACTION %d FINISHED #> Reaction finished successfuly. We converted Acid into... Water?\n", reactions);
 		pthread_mutex_unlock( &mutex_print );
 
 		pthread_mutex_lock( &reaction_mutex );	
