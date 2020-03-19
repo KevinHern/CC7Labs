@@ -158,7 +158,7 @@ void criticalSection(pthread_cond_t * cond_var, int oxy, int nit, int hyd, struc
 
 /* MOLECULES THREAD FUNCTIONS SECTION */
 void * Ox(void * arg) {
-	sleep((rand()%2) + 1);
+	//sleep((rand()%2) + 1);
 	struct node * thread = (struct node *)arg;
 
 
@@ -189,7 +189,7 @@ void * Ox(void * arg) {
 }
 
 void * Ni(void * arg) {
-	sleep((rand()%2) + 1);
+	//sleep((rand()%2) + 1);
 	struct node * thread = (struct node *)arg;
 
 
@@ -222,7 +222,7 @@ void * Ni(void * arg) {
 }
 
 void * Hi(void * arg) {
-	sleep((rand()%2) + 1);
+	//sleep((rand()%2) + 1);
 	struct node * thread = (struct node *)arg;
 
 
@@ -274,10 +274,16 @@ void setMolecules(int number) {
 
 int main(int argc, char const *argv[])
 {
+	printf("NH3 + O2 → Water?\n");
+
+
 	// Read number of reactions
 	int reactions = read_requirement();
 	setMolecules(reactions);
-	//printf("# Threads: %d\n", 6*reactions);
+
+	printf("A total of %d Nitrogen, %d Hydrogen and %d Oxygen molecules are going to be created...\n", 
+		nitrogen_molecules, hydrogen_molecules, oxygen_molecules);
+	
 
 	// Set necessary arrays
 	pthread_t threads[6*reactions];
@@ -304,7 +310,7 @@ int main(int argc, char const *argv[])
 		//printf("Type: %d\n", thread->element);
 
 		if(thread->element == 2 && oxygen_molecules != 0) {
-			//sleep((rand()%2) + 1);
+			sleep((rand()%3) + 1);
 			// Oxygen
 			--oxygen_molecules;
 			//printf("Creating Oxygen\n");
@@ -315,7 +321,7 @@ int main(int argc, char const *argv[])
 
 
 		if(thread->element == 1 && nitrogen_molecules != 0) {
-			//sleep((rand()%2) + 1);
+			sleep((rand()%3) + 1);
 			// Nitrogen
 			--nitrogen_molecules;
 			//printf("Creating Nitrogen\n");
@@ -326,7 +332,7 @@ int main(int argc, char const *argv[])
 
 		
 		if(thread->element == 0 && hydrogen_molecules != 0){
-			//sleep((rand()%2) + 1);
+			sleep((rand()%3) + 1);
 			// Hydrogen
 			--hydrogen_molecules;
 			//printf("Creating Hydrogen\n");
